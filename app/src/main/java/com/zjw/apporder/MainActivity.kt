@@ -17,12 +17,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         var tabNames = ArrayList<String>()
-        var fragments = ArrayList<GraphFragment>()
+        var fragments = ArrayList<MyFragemnt>()
         for (i in 0..9) {
             tabLayout3.addTab(tabLayout3.newTab().setText("卡$i"))
            // tabLayout4.addTab(tabLayout4.newTab().setText("卡$i"))
             tabNames.add("卡$i")
-            fragments.add(GraphFragment())
+            fragments.add(MyFragemnt())
         }
 
         val mVpAndTLAdapter = VPAndTLAdapter(supportFragmentManager, tabNames, fragments)

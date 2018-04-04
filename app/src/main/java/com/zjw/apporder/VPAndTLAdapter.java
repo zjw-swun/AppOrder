@@ -9,9 +9,9 @@ import java.util.List;
 public class VPAndTLAdapter extends FragmentStatePagerAdapter {
 
     private List<String> tabNames;
-    private List<GraphFragment> fragments;
+    private List<MyFragemnt> fragments;
 
-    public VPAndTLAdapter(FragmentManager fm, List<String> tabNames, List<GraphFragment> fragments) {
+    public VPAndTLAdapter(FragmentManager fm, List<String> tabNames, List<MyFragemnt> fragments) {
         super(fm);
         this.tabNames = tabNames;
         this.fragments = fragments;

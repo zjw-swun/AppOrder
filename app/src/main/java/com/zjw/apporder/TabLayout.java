@@ -64,6 +64,8 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -277,7 +279,7 @@ public class TabLayout extends HorizontalScrollView {
     ViewPager mViewPager;
     private PagerAdapter mPagerAdapter;
     private DataSetObserver mPagerAdapterObserver;
-    private TabLayoutOnPageChangeListener mPageChangeListener;
+    TabLayoutOnPageChangeListener mPageChangeListener;
     private AdapterChangeListener mAdapterChangeListener;
     private boolean mSetupViewPagerImplicitly;
 
@@ -1794,6 +1796,11 @@ public class TabLayout extends HorizontalScrollView {
         private int mIndicatorRight = -1;
 
         private ValueAnimator mIndicatorAnimator;
+        private int mSelectedIndicatorWidth =  dpToPx(27);;
+        private int mMinTabWidth = Integer.MAX_VALUE;
+        private float left;
+        private float right;
+        public boolean mIsDragged;
 
         SlidingTabStrip(Context context) {
             super(context);
@@ -1863,9 +1870,19 @@ public class TabLayout extends HorizontalScrollView {
                 // EXACTLY. Ignore the first call since anything we do will be overwritten anyway
                 return;
             }
+            final int count = getChildCount();
 
+            // First we'll find the widest tab
+            int largestTabWidth = 0;
+            for (int i = 0, z = count; i < z; i++) {
+                View child = getChildAt(i);
+                if (child.getVisibility() == VISIBLE) {
+                    largestTabWidth = Math.max(largestTabWidth, child.getMeasuredWidth());
+                    mMinTabWidth =  Math.min(mMinTabWidth,child.getMeasuredWidth());
+                }
+            }
             if (mMode == MODE_FIXED && mTabGravity == GRAVITY_CENTER) {
-                final int count = getChildCount();
+              /*  final int count = getChildCount();
 
                 // First we'll find the widest tab
                 int largestTabWidth = 0;
@@ -1874,7 +1891,7 @@ public class TabLayout extends HorizontalScrollView {
                     if (child.getVisibility() == VISIBLE) {
                         largestTabWidth = Math.max(largestTabWidth, child.getMeasuredWidth());
                     }
-                }
+                }*/
 
                 if (largestTabWidth <= 0) {
                     // If we don't have a largest child yet, skip until the next measure pass
@@ -2035,8 +2052,19 @@ public class TabLayout extends HorizontalScrollView {
 
             // Thick colored underline below the current selection
             if (mIndicatorLeft >= 0 && mIndicatorRight > mIndicatorLeft) {
-                canvas.drawRect(mIndicatorLeft, getHeight() - mSelectedIndicatorHeight,
-                        mIndicatorRight, getHeight(), mSelectedIndicatorPaint);
+                if (mSelectedIndicatorWidth > 0 && mMinTabWidth >= mSelectedIndicatorWidth) {
+                    if (mViewPager == null || !mIsDragged) {
+                        left = mIndicatorLeft + (getChildAt(getSelectedTabPosition()).getMeasuredWidth() - mSelectedIndicatorWidth) / 2.0f;
+                        right = left + mSelectedIndicatorWidth;
+                    }
+                    canvas.drawRect(left,
+                            getHeight() - mSelectedIndicatorHeight,
+                            right,
+                            getHeight(), mSelectedIndicatorPaint);
+                } else {
+                    canvas.drawRect(mIndicatorLeft, getHeight() - mSelectedIndicatorHeight,
+                            mIndicatorRight, getHeight(), mSelectedIndicatorPaint);
+                }
             }
         }
     }
@@ -2106,6 +2134,8 @@ public class TabLayout extends HorizontalScrollView {
         private final WeakReference<TabLayout> mTabLayoutRef;
         private int mPreviousScrollState;
         private int mScrollState;
+        private AccelerateInterpolator mStartInterpolator = new AccelerateInterpolator();
+        private DecelerateInterpolator mEndInterpolator = new DecelerateInterpolator(1.6f);
 
         public TabLayoutOnPageChangeListener(TabLayout tabLayout) {
             mTabLayoutRef = new WeakReference<>(tabLayout);
@@ -2132,6 +2162,20 @@ public class TabLayout extends HorizontalScrollView {
                 final boolean updateIndicator = !(mScrollState == SCROLL_STATE_SETTLING
                         && mPreviousScrollState == SCROLL_STATE_IDLE);
                 tabLayout.setScrollPosition(position, positionOffset, updateText, updateIndicator);
+
+                if (mScrollState == SCROLL_STATE_SETTLING && mPreviousScrollState == SCROLL_STATE_IDLE) {
+                    tabLayout.mTabStrip.mIsDragged = false;
+                }else {
+                    tabLayout.mTabStrip.mIsDragged = true;
+                    float offset = (tabLayout.mTabStrip.getChildAt(tabLayout.mTabStrip.mSelectedPosition).getMeasuredWidth() - tabLayout.mTabStrip.mSelectedIndicatorWidth) / 2.0f;
+                    float leftX = tabLayout.mTabStrip.getChildAt(tabLayout.mTabStrip.mSelectedPosition).getLeft() + offset;
+                    float rightX = leftX + tabLayout.mTabStrip.mSelectedIndicatorWidth;
+                    float nextLeftX = tabLayout.mTabStrip.getChildAt(tabLayout.mTabStrip.mSelectedPosition).getLeft() + tabLayout.mTabStrip.getChildAt(0).getWidth() + offset;
+                    float nextRightX = nextLeftX + tabLayout.mTabStrip.mSelectedIndicatorWidth;
+                    tabLayout.mTabStrip.left = leftX + (nextLeftX - leftX) * mStartInterpolator.getInterpolation(positionOffset);
+                    tabLayout.mTabStrip.right = rightX + (nextRightX - rightX) * mEndInterpolator.getInterpolation(positionOffset);
+                }
+                ViewCompat.postInvalidateOnAnimation(tabLayout.mTabStrip);
             }
         }
 

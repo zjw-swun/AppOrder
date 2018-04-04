@@ -7,9 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class GraphFragment extends Fragment {
+public class MyFragemnt extends Fragment {
 
-    private static final String TAG = "GraphFragment";
+    private static final String TAG = "MyFragemnt";
     private View rootView;
 
     @Nullable
