@@ -2,7 +2,8 @@
 
 # 0. 老规矩，先放效果图
 
-![](https://user-gold-cdn.xitu.io/2018/4/5/16291dc9e868671c?w=436&h=736&f=gif&s=1067794)
+
+![](https://user-gold-cdn.xitu.io/2018/4/22/162e90b6ce022ae3?w=383&h=651&f=gif&s=549258)
 
 # 1. 骚操作之一：copy support包TabLayout 一份当做自己的自定义view
 本次骚操作是基于support '27.1.0'版本，从support '27.1.0'考出文件到我的项目目录如下图，蓝色部分，四个文件，当然不是一帆风顺的，需要改点包名，取消掉一下注解警告，总之后面会放出源码
@@ -36,7 +37,7 @@ OK, mIndicatorLeft是滚动或者点击切tab时候通过偏移量计算出来�
 
 ![](https://user-gold-cdn.xitu.io/2018/4/5/16291d9b7fb06f96?w=1691&h=970&f=png&s=196796)
 
-好了，已经完成修改线宽目标了。
+好了，已经完成修改线宽目标了。(扩展一下：这里你也可以修改draw方法，画个图，或者画个小圆圈什么的)
 
 接下来增加指示线滑动切tab的过渡动画
 
@@ -48,10 +49,11 @@ OK, mIndicatorLeft是滚动或者点击切tab时候通过偏移量计算出来�
 这样改好处多多，为什么呢？xml基本不需要改变，tablayout名字改一下，代码也是导包改一下，替换官方tablayout的时候代码几乎不需要变化，是不是很爽？
 
 # 3. github下载，喜欢就给个star吧，如果对你有帮助的话
-//太晚了 我还没上传到github呢 先占个坑位
+[https://github.com/zjw-swun/AppOrder](https://github.com/zjw-swun/AppOrder)
 
 # 4. 总结
 官方support包就是可以这么任性的拷贝出来，有时候一个考出一个类根本没涉及到别的类，善假于物也。
+
 
 
 ## License

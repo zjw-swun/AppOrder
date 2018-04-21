@@ -28,5 +28,7 @@ class MainActivity : AppCompatActivity() {
         val mVpAndTLAdapter = VPAndTLAdapter(supportFragmentManager, tabNames, fragments)
         viewPager.adapter = mVpAndTLAdapter
         tabLayout4.setupWithViewPager(viewPager)
+        page_indicator.setPageTitleVisible(false)
+        page_indicator.setupWithViewPager(viewPager)
     }
 }

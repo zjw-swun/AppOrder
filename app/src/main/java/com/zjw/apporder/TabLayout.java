@@ -903,13 +903,19 @@ public class TabLayout extends HorizontalScrollView {
         populateFromPagerAdapter();
     }
 
+    private boolean mIsVisible = true;
+
+    public void setPageTitleVisible(boolean isVisible){
+        mIsVisible = isVisible;
+    }
+
     void populateFromPagerAdapter() {
         removeAllTabs();
 
         if (mPagerAdapter != null) {
             final int adapterCount = mPagerAdapter.getCount();
             for (int i = 0; i < adapterCount; i++) {
-                addTab(newTab().setText(mPagerAdapter.getPageTitle(i)), false);
+                addTab(newTab().setText(mIsVisible ? mPagerAdapter.getPageTitle(i) : ""), false);
             }
 
             // Make sure we reflect the currently set ViewPager item
