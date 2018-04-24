@@ -11,24 +11,39 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        for (i in 0..5) {
-            tabLayout1.addTab(tabLayout1.newTab().setText("卡$i"))
-            tabLayout2.addTab(tabLayout2.newTab().setText("卡$i"))
-        }
-
         var tabNames = ArrayList<String>()
         var fragments = ArrayList<MyFragemnt>()
-        for (i in 0..9) {
-            tabLayout3.addTab(tabLayout3.newTab().setText("卡$i"))
-           // tabLayout4.addTab(tabLayout4.newTab().setText("卡$i"))
-            tabNames.add("卡$i")
+        var strList = arrayListOf<String>(
+            "A卡A",
+            "A卡 卡A",
+            "A卡 卡 卡A",
+            "A卡 卡 卡 卡A",
+            "A卡 卡 卡A",
+            "A卡 卡A",
+            "A卡A"
+        )
+
+        strList.forEach {
+            tabNames.add(it)
             fragments.add(MyFragemnt())
         }
+        val adapter = PageAdapter(supportFragmentManager, tabNames, fragments)
+        viewPager.adapter = adapter
 
-        val mVpAndTLAdapter = VPAndTLAdapter(supportFragmentManager, tabNames, fragments)
-        viewPager.adapter = mVpAndTLAdapter
-        tabLayout4.setupWithViewPager(viewPager)
+        //设置tablayout固定线宽
+        //tabLayout.selectedTabIndicatorWidth = dpToPx(27)
+        //设置tablayout 切换tab的动画
+        tabLayout.isNeedSwitchAnimation = true
+        //设置tablayout 线宽为包裹内容 (与设置tablayout固定线宽 互斥 所以尽量使用一个)
+        tabLayout.setIndicatorWidthWrapContent(true)
+
+        tabLayout.setupWithViewPager(viewPager)
+        //指示器不需要显示PageAdapter 中的标题所以禁掉
         page_indicator.setPageTitleVisible(false)
         page_indicator.setupWithViewPager(viewPager)
+    }
+
+    internal fun dpToPx(dps: Int): Int {
+        return Math.round(resources.displayMetrics.density * dps)
     }
 }

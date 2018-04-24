@@ -5,29 +5,8 @@
               android:layout_height="wrap_content"
               android:orientation="vertical">
 
-    <com.zjw.apporder.TabLayout
-        android:id="@+id/tabLayout1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:tabGravity="fill"
-        app:tabMode="fixed"/>
-
-    <com.zjw.apporder.TabLayout
-        android:id="@+id/tabLayout2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:tabGravity="center"
-        app:tabMode="fixed"/>
-
-    <com.zjw.apporder.TabLayout
-        android:id="@+id/tabLayout3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:tabGravity="fill"
-        app:tabMode="scrollable"/>
-
-    <com.zjw.apporder.TabLayout
-        android:id="@+id/tabLayout4"
+    <com.zjw.tablayout.TabLayout
+        android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:tabGravity="center"
@@ -43,7 +22,7 @@
             android:layout_height="match_parent"
             />
 
-        <com.zjw.apporder.TabLayout
+        <com.zjw.tablayout.TabLayout
             android:id="@+id/page_indicator"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

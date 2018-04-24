@@ -6,12 +6,12 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 import java.util.List;
 
-public class VPAndTLAdapter extends FragmentStatePagerAdapter {
+public class PageAdapter extends FragmentStatePagerAdapter {
 
     private List<String> tabNames;
     private List<MyFragemnt> fragments;
 
-    public VPAndTLAdapter(FragmentManager fm, List<String> tabNames, List<MyFragemnt> fragments) {
+    public PageAdapter(FragmentManager fm, List<String> tabNames, List<MyFragemnt> fragments) {
         super(fm);
         this.tabNames = tabNames;
         this.fragments = fragments;

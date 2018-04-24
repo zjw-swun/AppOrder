@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.zjw.apporder;
+package com.zjw.tablayout;
 
 import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;

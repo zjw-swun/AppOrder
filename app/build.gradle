@@ -4,8 +4,6 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
-//apply plugin: com.zjw.plugin.MyPlugin
-
 android {
     compileSdkVersion compileVersion
     buildToolsVersion buildVersion
@@ -37,23 +35,3 @@ dependencies {
     implementation "com.android.support:support-v4:27.1.0"
 }
 
-/*
-AppMethodTime {
-    //enabled默认值为true
-    //enabled = true 表示允许插入函数耗时测量代码
-    //enabled = false 表示不允许插入函数耗时测量代码
-    enabled = false
-
-    //useCostTime默认值为true
-    // useCostTime = true 表示本lib module或本application module中build\intermediates\classes\debug目录下
-    // class对应java文件中带有CostTime注解的方法才会在编译成class时被插入函数耗时测量代码，
-
-    // useCostTime = false 表示本lib module或本application module中build\intermediates\classes\debug目录下
-    // class对应java文件所有书写的方法均会在编译成class时被插入数耗时测量代码
-    useCostTime = false
-
-    //showLog默认值为true
-    // showLog = true 表示允许在Gradle Console中输出插入函数耗时测量代码过程中的Log
-    // showLog = false 表示不允许在Gradle Console中输出插入函数耗时测量代码过程中的Log
-    showLog = true
-}*/

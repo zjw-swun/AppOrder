@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.zjw.apporder;
+package com.zjw.tablayout;
 
 import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 import static android.support.v4.view.ViewPager.SCROLL_STATE_DRAGGING;
@@ -181,6 +181,7 @@ public class TabLayout extends HorizontalScrollView {
      * @see #getTabMode()
      */
     public static final int MODE_FIXED = 1;
+    private boolean mNeedSwitchAnimation;
 
     /**
      * @hide
@@ -1802,11 +1803,12 @@ public class TabLayout extends HorizontalScrollView {
         private int mIndicatorRight = -1;
 
         private ValueAnimator mIndicatorAnimator;
-        private int mSelectedIndicatorWidth =  dpToPx(27);;
+        private int mSelectedIndicatorWidth =  -1;
         private int mMinTabWidth = Integer.MAX_VALUE;
         private float left;
         private float right;
         public boolean mIsDragged;
+        private boolean mIsIndicatorWidthWrapContent;
 
         SlidingTabStrip(Context context) {
             super(context);
@@ -2058,6 +2060,7 @@ public class TabLayout extends HorizontalScrollView {
 
             // Thick colored underline below the current selection
             if (mIndicatorLeft >= 0 && mIndicatorRight > mIndicatorLeft) {
+                mSelectedIndicatorWidth = getWrapContentIndicatorWidth(getSelectedTabPosition());
                 if (mSelectedIndicatorWidth > 0 && mMinTabWidth >= mSelectedIndicatorWidth) {
                     if (mViewPager == null || !mIsDragged) {
                         left = mIndicatorLeft + (getChildAt(getSelectedTabPosition()).getMeasuredWidth() - mSelectedIndicatorWidth) / 2.0f;
@@ -2071,6 +2074,44 @@ public class TabLayout extends HorizontalScrollView {
                     canvas.drawRect(mIndicatorLeft, getHeight() - mSelectedIndicatorHeight,
                             mIndicatorRight, getHeight(), mSelectedIndicatorPaint);
                 }
+            }
+        }
+
+        private int getWrapContentIndicatorWidth(int index) {
+            int width;
+            if (mIsIndicatorWidthWrapContent) {
+                TextView textView = ((TabView) getChildAt(index)).mTextView;
+                if (textView != null) {
+                    width = textView.getMeasuredWidth();
+                } else {
+                    width = getChildAt(index).getMeasuredWidth() - mTabPaddingStart - mTabPaddingEnd;
+                }
+
+            } else {
+                width = mSelectedIndicatorWidth;
+            }
+            return width;
+        }
+
+        public void setSelectedIndicatorWidth(int selectedIndicatorWidth) {
+            if (mSelectedIndicatorWidth != selectedIndicatorWidth) {
+                mSelectedIndicatorWidth = selectedIndicatorWidth;
+                ViewCompat.postInvalidateOnAnimation(this);
+            }
+        }
+
+        public int getSelectedIndicatorWidth() {
+            return mSelectedIndicatorWidth;
+        }
+
+        public boolean isIndicatorWidthWrapContent() {
+            return mIsIndicatorWidthWrapContent;
+        }
+
+        public void setIndicatorWidthWrapContent(boolean indicatorWidthWrapContent) {
+            if (mIsIndicatorWidthWrapContent != indicatorWidthWrapContent) {
+                mIsIndicatorWidthWrapContent = indicatorWidthWrapContent;
+                ViewCompat.postInvalidateOnAnimation(this);
             }
         }
     }
@@ -2169,19 +2210,31 @@ public class TabLayout extends HorizontalScrollView {
                         && mPreviousScrollState == SCROLL_STATE_IDLE);
                 tabLayout.setScrollPosition(position, positionOffset, updateText, updateIndicator);
 
-                if (mScrollState == SCROLL_STATE_SETTLING && mPreviousScrollState == SCROLL_STATE_IDLE) {
-                    tabLayout.mTabStrip.mIsDragged = false;
-                }else {
-                    tabLayout.mTabStrip.mIsDragged = true;
-                    float offset = (tabLayout.mTabStrip.getChildAt(tabLayout.mTabStrip.mSelectedPosition).getMeasuredWidth() - tabLayout.mTabStrip.mSelectedIndicatorWidth) / 2.0f;
-                    float leftX = tabLayout.mTabStrip.getChildAt(tabLayout.mTabStrip.mSelectedPosition).getLeft() + offset;
-                    float rightX = leftX + tabLayout.mTabStrip.mSelectedIndicatorWidth;
-                    float nextLeftX = tabLayout.mTabStrip.getChildAt(tabLayout.mTabStrip.mSelectedPosition).getLeft() + tabLayout.mTabStrip.getChildAt(0).getWidth() + offset;
-                    float nextRightX = nextLeftX + tabLayout.mTabStrip.mSelectedIndicatorWidth;
-                    tabLayout.mTabStrip.left = leftX + (nextLeftX - leftX) * mStartInterpolator.getInterpolation(positionOffset);
-                    tabLayout.mTabStrip.right = rightX + (nextRightX - rightX) * mEndInterpolator.getInterpolation(positionOffset);
+                if (tabLayout.mNeedSwitchAnimation) {
+                    if (mScrollState == SCROLL_STATE_SETTLING && mPreviousScrollState == SCROLL_STATE_IDLE) {
+                        tabLayout.mTabStrip.mIsDragged = false;
+                    } else {
+                        tabLayout.mTabStrip.mIsDragged = true;
+                        if (tabLayout.mTabStrip.mSelectedPosition + 1 < tabLayout.mTabStrip.getChildCount()) {
+                            float offset = (tabLayout.mTabStrip.getChildAt(tabLayout.mTabStrip.mSelectedPosition).getMeasuredWidth()
+                                    - tabLayout.mTabStrip.getWrapContentIndicatorWidth(tabLayout.mTabStrip.mSelectedPosition)
+                            ) / 2.0f;
+                            float leftX = tabLayout.mTabStrip.getChildAt(tabLayout.mTabStrip.mSelectedPosition).getLeft() + offset;
+                            float rightX = leftX + tabLayout.mTabStrip.getWrapContentIndicatorWidth(tabLayout.mTabStrip.mSelectedPosition);
+
+                            float nextOffset = (tabLayout.mTabStrip.getChildAt(tabLayout.mTabStrip.mSelectedPosition + 1).getMeasuredWidth()
+                                    - tabLayout.mTabStrip.getWrapContentIndicatorWidth(tabLayout.mTabStrip.mSelectedPosition + 1)
+                            ) / 2.0f;
+                            float nextLeftX = tabLayout.mTabStrip.getChildAt(tabLayout.mTabStrip.mSelectedPosition).getLeft()
+                                    + tabLayout.mTabStrip.getChildAt(tabLayout.mTabStrip.mSelectedPosition).getWidth() + nextOffset;
+                            float nextRightX = nextLeftX +
+                                    tabLayout.mTabStrip.getWrapContentIndicatorWidth(tabLayout.mTabStrip.mSelectedPosition + 1);
+                            tabLayout.mTabStrip.left = leftX + (nextLeftX - leftX) * mStartInterpolator.getInterpolation(positionOffset);
+                            tabLayout.mTabStrip.right = rightX + (nextRightX - rightX) * mEndInterpolator.getInterpolation(positionOffset);
+                            ViewCompat.postInvalidateOnAnimation(tabLayout.mTabStrip);
+                        }
+                    }
                 }
-                ViewCompat.postInvalidateOnAnimation(tabLayout.mTabStrip);
             }
         }
 
@@ -2263,5 +2316,25 @@ public class TabLayout extends HorizontalScrollView {
         void setAutoRefresh(boolean autoRefresh) {
             mAutoRefresh = autoRefresh;
         }
+    }
+
+    public void setSelectedTabIndicatorWidth(int width) {
+        mTabStrip.setSelectedIndicatorWidth(width);
+    }
+
+    public int getSelectedTabIndicatorWidth() {
+        return mTabStrip.getSelectedIndicatorWidth();
+    }
+
+    public boolean isNeedSwitchAnimation() {
+        return mNeedSwitchAnimation;
+    }
+
+    public void setNeedSwitchAnimation(boolean needSwitchAnimation) {
+        mNeedSwitchAnimation = needSwitchAnimation;
+    }
+
+    public void setIndicatorWidthWrapContent(boolean isWrapContent){
+        mTabStrip.setIndicatorWidthWrapContent(isWrapContent);
     }
 }
