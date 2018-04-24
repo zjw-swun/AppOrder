@@ -3,8 +3,7 @@
 # 0. 老规矩，先放效果图
 
 
-
-![](https://user-gold-cdn.xitu.io/2018/4/25/162f89e791457e09?w=472&h=776&f=gif&s=1058034)
+![图片描述](https://github.com/zjw-swun/AppOrder/blob/master/images/1.gif)
 
 # 1. 骚操作之一：copy support包TabLayout 一份当做自己的自定义view
 本次骚操作是基于support '27.1.0'版本，从support '27.1.0'考出文件到我的项目目录如下图，蓝色部分，四个文件，当然不是一帆风顺的，需要改点包名，取消掉一下注解警告，总之后面会放出源码
