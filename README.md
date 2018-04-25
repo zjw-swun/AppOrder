@@ -20,7 +20,7 @@
    canvas.drawRect(mIndicatorLeft, getHeight() - mSelectedIndicatorHeight,
                             mIndicatorRight, getHeight(), mSelectedIndicatorPaint);
 ```
-OK, mIndicatorLeft是滚动或者点击切tab时候通过偏移量计算出来的，总之不重要，完成第一个目标。修改指示器线宽，思路呢，就是给mIndicatorLeft和mIndicatorRight做一个便宜量就行了，
+OK, mIndicatorLeft是滚动或者点击切tab时候通过偏移量计算出来的，总之不重要，完成第一个目标。修改指示器线宽，思路呢，就是给mIndicatorLeft和mIndicatorRight做一个偏移量就行了，
 看看我怎么改的吧
 
 ![](https://user-gold-cdn.xitu.io/2018/4/5/16291d715ee6ddc4?w=1868&h=616&f=png&s=127003)
