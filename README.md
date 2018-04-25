@@ -6,10 +6,10 @@
 ![图片描述](https://github.com/zjw-swun/AppOrder/blob/master/images/1.gif)
 
 # 1. 骚操作之一：copy support包TabLayout 一份当做自己的自定义view
-本次骚操作是基于support '27.1.0'版本，从support '27.1.0'考出文件到我的项目目录如下图，蓝色部分，四个文件，当然不是一帆风顺的，需要改点包名，取消掉一下注解警告，总之后面会放出源码
+本次骚操作是基于support '27.1.0'版本，从support '27.1.0'拷出文件到我的项目目录如下图，蓝色部分，四个文件，当然不是一帆风顺的，需要改点包名，取消掉一下注解警告，总之后面会放出源码
 
 ![](https://user-gold-cdn.xitu.io/2018/4/5/16291cbabfc62690?w=396&h=215&f=png&s=15889)
-不同的版本可能需要拷贝出来的文件不一样哟，于support '27.1.0'版本需要考出上图蓝色的4个文件
+不同的版本可能需要拷贝出来的文件不一样哟，于support '27.1.0'版本需要拷出上图蓝色的4个文件
 
 # 2. 骚操作之二： fuck源代码，读懂之后开始改造
 首先指示器的线是画出来的，关键代码如下 （以下改动代码均为tabLayout类）
@@ -52,7 +52,7 @@ OK, mIndicatorLeft是滚动或者点击切tab时候通过偏移量计算出来�
 [https://github.com/zjw-swun/AppOrder](https://github.com/zjw-swun/AppOrder)
 
 # 4. 总结
-官方support包就是可以这么任性的拷贝出来，有时候一个考出一个类根本没涉及到别的类，善假于物也。
+官方support包就是可以这么任性的拷贝出来，有时候一个拷出一个类根本没涉及到别的类，善假于物也。
 
 
 
