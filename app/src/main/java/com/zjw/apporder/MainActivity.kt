@@ -30,12 +30,15 @@ class MainActivity : AppCompatActivity() {
         val adapter = PageAdapter(supportFragmentManager, tabNames, fragments)
         viewPager.adapter = adapter
 
-        //设置tablayout固定线宽
-        //tabLayout.selectedTabIndicatorWidth = dpToPx(27)
         //设置tablayout 切换tab的动画
         tabLayout.isNeedSwitchAnimation = true
+
+        //设置tablayout固定线宽
+        //tabLayout.selectedTabIndicatorWidth = dpToPx(27)
         //设置tablayout 线宽为包裹内容 (与设置tablayout固定线宽 互斥 所以尽量使用一个)
         tabLayout.setIndicatorWidthWrapContent(true)
+        //还原成原来的tablayout默认线宽 (与设置tablayout固定线宽和包裹内容 互斥 所以尽量使用一个)
+        //tabLayout.selectedTabIndicatorWidth = -1
 
         tabLayout.setupWithViewPager(viewPager)
         //指示器不需要显示PageAdapter 中的标题所以禁掉
