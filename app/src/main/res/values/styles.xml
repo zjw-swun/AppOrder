@@ -8,4 +8,12 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="CustomerTabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabIndicatorHeight">2dp</item>
+        <item name="tabBackground">@android:color/white</item>
+        <item name="tabIndicatorColor">#4494F0</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">#828692</item>
+        <item name="tabSelectedTextColor">#353b4b</item>
+    </style>
 </resources>

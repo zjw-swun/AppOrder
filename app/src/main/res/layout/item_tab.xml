@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="horizontal">
+
+    <!-- 如果想用原来tabLayout的 title内容 必须使用@android:id/text1 为ID -->
+    <TextView
+        android:id="@android:id/text1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/text_blue_round_rectangle_steel_selector"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="2"
+        android:textColor="@drawable/text_blue_steel_select_selector"
+        android:textSize="14sp"
+        tools:text="tab title"/>
+
+    <!--  <TextView
+          android:id="@+id/text1"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="tab title"
+          android:background="@drawable/text_blue_round_rectangle_steel_selector"
+          android:ellipsize="end"
+          android:gravity="center"
+          android:maxLines="2"
+          android:textColor="@drawable/text_blue_steel_select_selector"
+          android:textSize="14sp"/>-->
+</LinearLayout>
