@@ -2078,11 +2078,9 @@ public class TabLayout extends HorizontalScrollView {
         }
 
         private int getWrapContentIndicatorWidth(int index) {
-            int width;
-            if (mIsIndicatorWidthWrapContent) {
+            int width = mSelectedIndicatorWidth;
+            if (mIsIndicatorWidthWrapContent && getChildAt(index) != null) {
                 width = getChildAt(index).getMeasuredWidth() - mTabPaddingStart - mTabPaddingEnd;
-            } else {
-                width = mSelectedIndicatorWidth;
             }
             return width;
         }
