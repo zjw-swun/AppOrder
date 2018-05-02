@@ -44,6 +44,13 @@ class MainActivity : AppCompatActivity() {
         //指示器不需要显示PageAdapter 中的标题所以禁掉
         page_indicator.setPageTitleVisible(false)
         page_indicator.setupWithViewPager(viewPager)
+
+        for (index in 0 until tabLayout.tabCount) {
+            //依次获取标签
+            val tab = tabLayout.getTabAt(index)
+            //为每个标签设置自定义布局(如果设置了自定义view 原来系统默认的ImageView和TextView 为gone)
+            tab?.setCustomView(R.layout.item_tab)
+        }
     }
 
     internal fun dpToPx(dps: Int): Int {
