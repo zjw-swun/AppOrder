@@ -75,6 +75,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 /**
@@ -182,6 +183,7 @@ public class TabLayout extends HorizontalScrollView {
      */
     public static final int MODE_FIXED = 1;
     private boolean mNeedSwitchAnimation;
+    private boolean mIsDefaultIndicatorWidth;
 
     /**
      * @hide
@@ -1804,11 +1806,11 @@ public class TabLayout extends HorizontalScrollView {
 
         private ValueAnimator mIndicatorAnimator;
         private int mSelectedIndicatorWidth =  -1;
-        private int mMinTabWidth = Integer.MAX_VALUE;
         private float left;
         private float right;
         public boolean mIsDragged;
         private boolean mIsIndicatorWidthWrapContent;
+        private ArrayList<Integer> mWidthList = new ArrayList<>();
 
         SlidingTabStrip(Context context) {
             super(context);
@@ -1878,19 +1880,9 @@ public class TabLayout extends HorizontalScrollView {
                 // EXACTLY. Ignore the first call since anything we do will be overwritten anyway
                 return;
             }
-            final int count = getChildCount();
 
-            // First we'll find the widest tab
-            int largestTabWidth = 0;
-            for (int i = 0, z = count; i < z; i++) {
-                View child = getChildAt(i);
-                if (child.getVisibility() == VISIBLE) {
-                    largestTabWidth = Math.max(largestTabWidth, child.getMeasuredWidth());
-                    mMinTabWidth =  Math.min(mMinTabWidth,child.getMeasuredWidth());
-                }
-            }
             if (mMode == MODE_FIXED && mTabGravity == GRAVITY_CENTER) {
-              /*  final int count = getChildCount();
+                final int count = getChildCount();
 
                 // First we'll find the widest tab
                 int largestTabWidth = 0;
@@ -1899,7 +1891,7 @@ public class TabLayout extends HorizontalScrollView {
                     if (child.getVisibility() == VISIBLE) {
                         largestTabWidth = Math.max(largestTabWidth, child.getMeasuredWidth());
                     }
-                }*/
+                }
 
                 if (largestTabWidth <= 0) {
                     // If we don't have a largest child yet, skip until the next measure pass
@@ -2061,7 +2053,16 @@ public class TabLayout extends HorizontalScrollView {
             // Thick colored underline below the current selection
             if (mIndicatorLeft >= 0 && mIndicatorRight > mIndicatorLeft) {
                 mSelectedIndicatorWidth = getWrapContentIndicatorWidth(getSelectedTabPosition());
-                if (mSelectedIndicatorWidth > 0 && mMinTabWidth >= mSelectedIndicatorWidth) {
+                int minTabWidth = Integer.MAX_VALUE;
+                for (int i = 0; i < getChildCount(); i++) {
+                    View child = getChildAt(i);
+                    if (child.getVisibility() == VISIBLE || child.getVisibility() == INVISIBLE) {
+                        minTabWidth = Math.min(minTabWidth, child.getMeasuredWidth());
+                    }
+                }
+                if (mSelectedIndicatorWidth > 0 && getSelectedTabPosition() >= 0 &&
+                        (mIsIndicatorWidthWrapContent || (mSelectedIndicatorWidth <= minTabWidth))
+                        ) {
                     if (mViewPager == null || !mIsDragged) {
                         left = mIndicatorLeft + (getChildAt(getSelectedTabPosition()).getMeasuredWidth() - mSelectedIndicatorWidth) / 2.0f;
                         right = left + mSelectedIndicatorWidth;
@@ -2070,17 +2071,43 @@ public class TabLayout extends HorizontalScrollView {
                             getHeight() - mSelectedIndicatorHeight,
                             right,
                             getHeight(), mSelectedIndicatorPaint);
+                    mIsDefaultIndicatorWidth = true;
                 } else {
                     canvas.drawRect(mIndicatorLeft, getHeight() - mSelectedIndicatorHeight,
                             mIndicatorRight, getHeight(), mSelectedIndicatorPaint);
+                    mIsDefaultIndicatorWidth = false;
                 }
             }
         }
 
         private int getWrapContentIndicatorWidth(int index) {
             int width = mSelectedIndicatorWidth;
+            mWidthList.clear();
             if (mIsIndicatorWidthWrapContent && getChildAt(index) != null) {
-                width = getChildAt(index).getMeasuredWidth() - mTabPaddingStart - mTabPaddingEnd;
+                final View childAt = getChildAt(index);
+                if (childAt instanceof TabView) {
+                    final TabView tabView = (TabView) childAt;
+                    if (tabView.mIconView != null && tabView.isShown()) {
+                        mWidthList.add(tabView.mIconView.getMeasuredWidth());
+                    }
+                    if (tabView.mTextView != null && tabView.isShown()) {
+                        mWidthList.add(tabView.mTextView.getMeasuredWidth());
+                    }
+                    if (tabView.mCustomIconView != null && tabView.isShown()) {
+                        mWidthList.add(tabView.mCustomIconView.getMeasuredWidth());
+                    }
+                    if (tabView.mCustomTextView != null && tabView.isShown()) {
+                        mWidthList.add(tabView.mCustomTextView.getMeasuredWidth());
+                    }
+                    if (!mWidthList.isEmpty()) {
+                        Collections.sort(mWidthList);
+                        width = mWidthList.get(mWidthList.size()-1);
+                    } else {
+                        width = childAt.getMeasuredWidth() - mTabPaddingStart - mTabPaddingEnd;
+                    }
+                } else {
+                    width = childAt.getMeasuredWidth() - mTabPaddingStart - mTabPaddingEnd;
+                }
             }
             return width;
         }
@@ -2328,5 +2355,9 @@ public class TabLayout extends HorizontalScrollView {
 
     public void setIndicatorWidthWrapContent(boolean isWrapContent){
         mTabStrip.setIndicatorWidthWrapContent(isWrapContent);
+    }
+
+    public boolean isDefaultIndicatorWidth() {
+        return mIsDefaultIndicatorWidth;
     }
 }
