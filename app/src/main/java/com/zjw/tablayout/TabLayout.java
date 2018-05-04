@@ -183,7 +183,7 @@ public class TabLayout extends HorizontalScrollView {
      */
     public static final int MODE_FIXED = 1;
     private boolean mNeedSwitchAnimation;
-    private boolean mIsDefaultIndicatorWidth;
+    private boolean mIsDefaultIndicatorWidth = true;
 
     /**
      * @hide
@@ -2071,11 +2071,11 @@ public class TabLayout extends HorizontalScrollView {
                             getHeight() - mSelectedIndicatorHeight,
                             right,
                             getHeight(), mSelectedIndicatorPaint);
-                    mIsDefaultIndicatorWidth = true;
+                    mIsDefaultIndicatorWidth = false;
                 } else {
                     canvas.drawRect(mIndicatorLeft, getHeight() - mSelectedIndicatorHeight,
                             mIndicatorRight, getHeight(), mSelectedIndicatorPaint);
-                    mIsDefaultIndicatorWidth = false;
+                    mIsDefaultIndicatorWidth = true;
                 }
             }
         }
