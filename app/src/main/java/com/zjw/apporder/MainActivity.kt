@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         }
         val adapter = PageAdapter(supportFragmentManager, tabNames, fragments)
         viewPager.adapter = adapter
-
+        viewPager.offscreenPageLimit = fragments.size
 
         //tabLayout.tabMode = TabLayout.MODE_FIXED
         tabLayout.tabMode = TabLayout.MODE_SCROLLABLE

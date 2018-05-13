@@ -1,14 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <Button
-        android:layout_width="300dp"
+    <com.zjw.apporder.MyLinearLayout
+        android:id="@+id/myLayout"
+        android:layout_width="wrap_content"
         android:layout_height="300dp"
-        android:layout_centerInParent="true"
-        android:text="点我"
-        android:textSize="30sp"
-        />
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true">
+
+        <RelativeLayout
+            android:id="@+id/content"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+            <RelativeLayout
+                android:id="@+id/button"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:background="@color/colorPrimaryDark"
+                android:text="点我"
+                android:textSize="20sp" />
+
+            <GridLayout
+                android:id="@+id/gridLayout"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@+id/button"
+                android:background="@android:color/holo_red_light" />
+        </RelativeLayout>
+    </com.zjw.apporder.MyLinearLayout>
 
 </RelativeLayout>
