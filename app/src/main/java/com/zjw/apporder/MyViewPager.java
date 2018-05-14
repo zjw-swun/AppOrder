@@ -1,6 +1,7 @@
 package com.zjw.apporder;
 
 import android.content.Context;
+import android.graphics.ImageFormat;
 import android.graphics.RectF;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,6 +16,7 @@ public class MyViewPager extends ViewPager {
     private float currentLeft;
     private Boolean shouldIntercept;
     private MotionEvent obtain;
+    private int mState;
 
     public MyViewPager(@NonNull Context context) {
         super(context);
@@ -28,6 +30,17 @@ public class MyViewPager extends ViewPager {
     }
 
     private void init(Context context) {
+        addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener(){
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                mState = state;
+                /*if (state == ViewPager.SCROLL_STATE_DRAGGING) {
+                    // 用户拖动ViewPager, 取消自动滑动
+                } else if (state == ViewPager.SCROLL_STATE_IDLE) {
+                    // 滑动结束, 视情况是否重启自动滑动
+                }*/
+            }
+        });
     }
 
     @Override
@@ -61,6 +74,9 @@ public class MyViewPager extends ViewPager {
                     if (canViewReceivePointerEvents(ev.getRawX(), ev.getRawY(), content)) {
                         obtain = MotionEvent.obtainNoHistory(ev);
                         shouldIntercept = false;
+                        if (mState != ViewPager.SCROLL_STATE_IDLE) {
+                            super.onInterceptTouchEvent(obtain);
+                        }
                     }
                     break;
                 case MotionEvent.ACTION_MOVE:
@@ -68,7 +84,8 @@ public class MyViewPager extends ViewPager {
                     currentLeft = ev.getRawX();
                     if (obtain != null
                             && content.getLeft() == myLayout.getPaddingLeft()
-                            && currentLeft - preLeft < 0) {
+                            && currentLeft - preLeft < 0
+                            && mState == ViewPager.SCROLL_STATE_IDLE) {
                         shouldIntercept = true;
                         obtain.offsetLocation(-obtain.getRawX(), 0);
                         obtain.offsetLocation(currentLeft, 0);
