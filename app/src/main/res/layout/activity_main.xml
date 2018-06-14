@@ -35,5 +35,17 @@
             app:tabIndicatorHeight="0dp"
             app:tabPaddingEnd="10dp"
             app:tabPaddingStart="10dp"/>
+
+
+        <com.zjw.apporder.MyView
+            android:id="@+id/tx"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:src="@color/colorPrimaryDark"
+            android:text="打酱油"
+            android:elevation="10dp"
+            android:textSize="25sp"/>
     </FrameLayout>
 </LinearLayout>

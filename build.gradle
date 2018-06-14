@@ -17,10 +17,10 @@ buildscript {
 
 
 ext {
-    compileVersion = 26
+    compileVersion = 27
     targetVersion = 25
     minVersion = 21
-    buildVersion = '26.0.3'
+    buildVersion = '27.0.3'
     supportLibVersion = '27.1.0'
     ankoVersion = '0.10.4'
 }
