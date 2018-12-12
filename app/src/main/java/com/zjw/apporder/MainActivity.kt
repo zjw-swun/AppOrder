@@ -5,10 +5,8 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Outline
-import android.graphics.Path
+import android.graphics.*
+import android.graphics.drawable.BitmapDrawable
 import android.os.Build
 import android.os.Bundle
 import android.support.annotation.RequiresApi
@@ -20,6 +18,7 @@ import com.zjw.tablayout.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
 import android.view.ViewOutlineProvider
 import android.view.ViewTreeObserver
+import android.widget.Toast
 
 
 class MainActivity : AppCompatActivity() {
@@ -99,12 +98,15 @@ class MainActivity : AppCompatActivity() {
         })
 
         //ViewOutlineProvider API21开始提供的 可以用于裁剪view的形状
-        /*tx.outlineProvider = object : ViewOutlineProvider() {
+        tx.outlineProvider = object : ViewOutlineProvider() {
             override fun getOutline(view: View, outline: Outline) {
-                 outline.setRoundRect(0, 0, view.width, view.height, 30F)
+                 outline.setOval(0, 0,100, 100)
             }
         }
-        tx.clipToOutline = true*/
+        tx.clipToOutline = true
+        tx.setOnClickListener {
+            Toast.makeText(this,"点击事件",Toast.LENGTH_SHORT).show()
+        }
 
         try {
             val intent = Intent(Intent.ACTION_MAIN)
@@ -140,6 +142,52 @@ class MainActivity : AppCompatActivity() {
         myDrawable.shadowShape = MyDrawable.SHAPE_OVAL
         myDrawable.shadowSide = MyDrawable.ALL
         myRoot.background = myDrawable*/
+    }
+
+
+    fun cutPic(bitmap: Bitmap): Bitmap {
+        var mMask: Bitmap? = null
+        var mImageChanged: Bitmap? = null
+        var result: Bitmap? = null
+        //ic_launcher_round是你用作图工具做出的形状图片   注意 ic_launcher_round内部必须是非透明的才能达到效果
+        mMask = resizeImage(BitmapFactory.decodeResource(resources, R.drawable.ic_launcher_round), 500, 500)
+        val matrix = Matrix()
+        matrix.postScale(mMask!!.width.toFloat() / bitmap.width.toFloat(), mMask.height.toFloat() / bitmap.height.toFloat())
+        //将图片缩放到和形状图片一样的大小
+        mImageChanged = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+
+        result = Bitmap.createBitmap(mMask.width, mMask.height, Bitmap.Config.ARGB_8888)
+        val mCanvas = Canvas(result!!)
+        val paint = Paint()
+        //paint.color = -0x1
+        paint.color = Color.RED
+        paint.isAntiAlias = true
+
+        //切割模式，取交集上层
+        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
+        mCanvas.drawBitmap(mMask, 0f, 0f, null)
+        //mCanvas.drawColor(Color.RED, PorterDuff.Mode.MULTIPLY)
+        mCanvas.drawBitmap(mImageChanged!!, 0f, 0f, paint)
+
+        paint.xfermode = null
+
+        return result
+    }
+
+    //防止绘图时候OOM 进行压缩
+    fun resizeImage(bitmap: Bitmap, w: Int, h: Int): Bitmap {
+        val width = bitmap.width
+        val height = bitmap.height
+
+        val scaleWidth = w.toFloat() / width
+        val scaleHeight = h.toFloat() / height
+
+        val matrix = Matrix()
+        matrix.postScale(scaleWidth, scaleHeight)
+        // if you want to rotate the Bitmap
+        // matrix.postRotate(45);
+        return Bitmap.createBitmap(bitmap, 0, 0, width,
+                height, matrix, true)
     }
 
     /**
