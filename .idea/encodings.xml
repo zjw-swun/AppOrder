@@ -1,14 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
-    <file url="file://$PROJECT_DIR$/app/src/main/assets/frag.sh" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/app/src/main/assets/vertex.sh" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/com/bn/Sample3_1/Sample3_1Activity.java" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/com/bn/Sample3_1/Sample3_1Activity.java" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/com/bn/Sample3_1/ShaderUtil.java" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/com/bn/Sample3_1/ShaderUtil.java" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/com/bn/Sample3_1/Triangle.java" charset="GBK" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/com/bn/Sample3_1/Triangle.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/assets/frag.glsl" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/assets/vertex.glsl" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/bn/Sample5_1/MatrixState.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/bn/Sample5_1/Sample5_1_Activity.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/com/bn/Sample5_1/ShaderUtil.java" charset="GBK" />

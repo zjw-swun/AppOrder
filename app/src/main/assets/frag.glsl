@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 #version 300 es
 precision mediump float;
 in vec4 aaColor; //接收从顶点着色器过来的参数
