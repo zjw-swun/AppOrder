@@ -98,15 +98,13 @@ class MainActivity : AppCompatActivity() {
         })
 
         //ViewOutlineProvider API21开始提供的 可以用于裁剪view的形状
-        tx.outlineProvider = object : ViewOutlineProvider() {
+       /* tx.outlineProvider = object : ViewOutlineProvider() {
             override fun getOutline(view: View, outline: Outline) {
                  outline.setOval(0, 0,100, 100)
             }
         }
-        tx.clipToOutline = true
-        tx.setOnClickListener {
-            Toast.makeText(this,"点击事件",Toast.LENGTH_SHORT).show()
-        }
+        tx.clipToOutline = true*/
+
 
         try {
             val intent = Intent(Intent.ACTION_MAIN)
@@ -142,6 +140,42 @@ class MainActivity : AppCompatActivity() {
         myDrawable.shadowShape = MyDrawable.SHAPE_OVAL
         myDrawable.shadowSide = MyDrawable.ALL
         myRoot.background = myDrawable*/
+        tx.setOnClickListener {
+            Toast.makeText(this@MainActivity,"点击",Toast.LENGTH_SHORT).show()
+
+            var start = System.nanoTime()
+            for (i in 0..10000){
+                arrayListOf(
+                        "A卡A",
+                        "A卡 卡A",
+                        "A卡 卡 卡A"
+                        ,
+                        "A卡 卡 卡 卡A",
+                        "A卡 卡 卡A",
+                        "A卡 卡A",
+                        "A卡A"
+                )
+            }
+            var end = System.nanoTime()
+            Log.e("TAG","onCreate "+(end-start)/1000000)
+            Toast.makeText(this@MainActivity,"内存分配完毕",Toast.LENGTH_SHORT).show()
+            forceGC()
+        }
+
+        myRoot.viewTreeObserver.addOnGlobalLayoutListener(object :ViewTreeObserver.OnGlobalLayoutListener{
+            override fun onGlobalLayout() {
+                myRoot.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                ScreenShotUtils.shotBitmap(this@MainActivity)
+            }
+        })
+    }
+
+    @SuppressLint("PrivateApi")
+    private fun forceGC() {
+        val myClass = classLoader.loadClass("com.android.internal.os.BinderInternal")
+        val newInstanceMethod = myClass.getDeclaredMethod("forceGc",String::class.java)
+        newInstanceMethod.isAccessible = true
+        newInstanceMethod.invoke(null, "bg")
     }
 
 
@@ -164,7 +198,7 @@ class MainActivity : AppCompatActivity() {
         paint.isAntiAlias = true
 
         //切割模式，取交集上层
-        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
+        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN) as Xfermode?
         mCanvas.drawBitmap(mMask, 0f, 0f, null)
         //mCanvas.drawColor(Color.RED, PorterDuff.Mode.MULTIPLY)
         mCanvas.drawBitmap(mImageChanged!!, 0f, 0f, paint)
@@ -212,4 +246,10 @@ class MainActivity : AppCompatActivity() {
     internal fun dpToPx(dps: Int): Int {
         return Math.round(resources.displayMetrics.density * dps)
     }
+
+  /*  override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        ScreenShotUtils.shotBitmap(this@MainActivity)
+    }*/
+
 }
