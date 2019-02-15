@@ -1,6 +1,7 @@
 package com.zjw.apporder;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.ImageFormat;
 import android.graphics.RectF;
 import android.support.annotation.NonNull;
@@ -17,6 +18,7 @@ public class MyViewPager extends ViewPager {
     private Boolean shouldIntercept;
     private MotionEvent obtain;
     private int mState;
+    private Canvas mCanvas;
 
     public MyViewPager(@NonNull Context context) {
         super(context);
@@ -135,5 +137,20 @@ public class MyViewPager extends ViewPager {
 
     private boolean canViewReceivePointerEvents(float x, float y, @NonNull View child) {
         return (child.isShown() || child.getAnimation() != null) && isTransformedTouchPointInView(x, y, child);
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        mCanvas = canvas;
+        super.onDraw(canvas);
+    }
+
+
+    public Canvas getCanvas() {
+        return mCanvas;
+    }
+
+    public void setCanvas(Canvas canvas) {
+        mCanvas = canvas;
     }
 }
