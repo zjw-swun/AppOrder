@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.zjw.apporder">
+    package="com.zjw.apporder">
+
+    <!-- Tell the system this app requires OpenGL ES 3.0. -->
+    <uses-feature android:glEsVersion="0x00030000" android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -9,11 +12,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.bn.Sample5_1.Sample5_1_Activity">
+        <activity android:name="com.bn.Sample3_1.Sample3_1Activity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>
