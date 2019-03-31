@@ -35,5 +35,10 @@
             app:tabIndicatorHeight="0dp"
             app:tabPaddingEnd="10dp"
             app:tabPaddingStart="10dp"/>
+
+        <Button
+            android:id="@+id/bt"
+            android:layout_width="200dp"
+            android:layout_height="200dp" />
     </FrameLayout>
 </LinearLayout>
