@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:id="@+id/myRoot"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/myRoot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:orientation="vertical">
 
     <com.zjw.tablayout.TabLayout
         android:id="@+id/tabLayout"
@@ -12,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="42dp"
         app:tabGravity="center"
-        app:tabMode="scrollable"/>
+        app:tabMode="scrollable" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -21,8 +22,7 @@
         <com.zjw.apporder.MyViewPager
             android:id="@+id/viewPager"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            />
+            android:layout_height="match_parent" />
 
         <com.zjw.tablayout.TabLayout
             android:id="@+id/page_indicator"
@@ -34,6 +34,6 @@
             app:tabGravity="center"
             app:tabIndicatorHeight="0dp"
             app:tabPaddingEnd="10dp"
-            app:tabPaddingStart="10dp"/>
+            app:tabPaddingStart="10dp" />
     </FrameLayout>
 </LinearLayout>

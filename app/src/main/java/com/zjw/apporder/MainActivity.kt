@@ -1,7 +1,15 @@
 package com.zjw.apporder
 
+import android.app.Activity
+import android.graphics.Color
 import android.os.Bundle
+import android.support.v4.view.ViewCompat
 import android.support.v7.app.AppCompatActivity
+import android.view.View
+import android.view.ViewGroup
+import android.view.Window
+import android.view.WindowManager
+import com.zjw.apporder.AndroidBug5497Workaround.assistActivity
 import com.zjw.tablayout.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -10,19 +18,24 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        /*    this.window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);*/
+
+        translucentStatusBar(this, true)
         setContentView(R.layout.activity_main)
 
         var tabNames = ArrayList<String>()
         var fragments = ArrayList<MyFragemnt>()
         var strList = arrayListOf(
-            "A卡A",
-            "A卡 卡A",
-            "A卡 卡 卡A"
-            ,
-            "A卡 卡 卡 卡A",
-            "A卡 卡 卡A",
-            "A卡 卡A",
-            "A卡A"
+                "A卡A",
+                "A卡 卡A",
+                "A卡 卡 卡A"
+                ,
+                "A卡 卡 卡 卡A",
+                "A卡 卡 卡A",
+                "A卡 卡A",
+                "A卡A"
         )
 
         strList.forEach {
@@ -63,9 +76,32 @@ class MainActivity : AppCompatActivity() {
             //为每个标签设置自定义布局(如果设置了自定义view 原来系统默认的ImageView和TextView 为gone)
             tab?.setCustomView(R.layout.item_tab)
         }
+
+        assistActivity(this)
     }
 
     internal fun dpToPx(dps: Int): Int {
         return Math.round(resources.displayMetrics.density * dps)
+    }
+
+    fun translucentStatusBar(activity: Activity, hideStatusBarBackground: Boolean) {
+        val window = activity.window
+
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        if (hideStatusBarBackground) {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+            window.statusBarColor = Color.TRANSPARENT
+            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        } else {
+            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
+        }
+
+        val mContentView = window.findViewById<View>(Window.ID_ANDROID_CONTENT) as ViewGroup
+        val mChildView = mContentView.getChildAt(0)
+        if (mChildView != null) {
+            ViewCompat.setFitsSystemWindows(mChildView, false)
+            ViewCompat.requestApplyInsets(mChildView)
+        }
     }
 }
