@@ -1,12 +1,16 @@
 package com.zjw.apporder
 
 import android.os.Bundle
+import android.os.SystemClock
 import android.support.v7.app.AppCompatActivity
+import android.view.MotionEvent
 import com.zjw.tablayout.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
+
+    private var eventTime: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,6 +67,76 @@ class MainActivity : AppCompatActivity() {
             //为每个标签设置自定义布局(如果设置了自定义view 原来系统默认的ImageView和TextView 为gone)
             tab?.setCustomView(R.layout.item_tab)
         }
+        tx.setOnClickListener {
+            createMotionEvent();
+        }
+    }
+
+    /**
+     * 使用自定义事件实现左滑一页和右滑一页(当复写PageAdapter的getPageWidth时viewpager的setCurrentItem失效)
+     */
+    private fun createMotionEvent() {
+        //模拟滑动viewpager
+        val resources = this.resources
+        val dm = resources.displayMetrics
+        val widthPixels = dm.widthPixels
+        val ds = widthPixels
+        //x最大值尽量保持在 240以内 为了兼容低分辨率手机
+        //index减小
+        val x = arrayListOf<Float>(
+                16.992188f,
+                18.999023f,
+                36.025677f,
+                63.36489f,
+                87.826065f,
+                110.195786f,
+                154.99512f,
+                154.99512f
+        )
+
+        //index减大
+       /* val x = arrayListOf<Float>(
+                212.98828f,
+                210.98145f,
+                200.78564f,
+                181.64513f,
+                155.28862f,
+                65.821724f,
+                0.0f,
+                0.0f
+        )*/
+        val y = arrayListOf<Float>(
+                110f,
+                110f,
+                110f,
+                110f,
+                110f,
+                110f,
+                110f,
+                110f
+        )
+
+        val downTime = SystemClock.uptimeMillis()
+        eventTime = downTime
+
+        val motionEventList = arrayListOf<MotionEvent>(
+                MotionEvent.obtain(downTime, downTime, MotionEvent.ACTION_DOWN, x[0], y[0], 0),
+                MotionEvent.obtain(downTime, getNewEventTime(), MotionEvent.ACTION_MOVE, x[1], y[1], 0),
+                MotionEvent.obtain(downTime, getNewEventTime(), MotionEvent.ACTION_MOVE, x[2], y[2], 0),
+                MotionEvent.obtain(downTime, getNewEventTime(), MotionEvent.ACTION_MOVE, x[3], y[3], 0),
+                MotionEvent.obtain(downTime, getNewEventTime(), MotionEvent.ACTION_MOVE, x[4], y[4], 0),
+                MotionEvent.obtain(downTime, getNewEventTime(), MotionEvent.ACTION_MOVE, x[5], y[5], 0),
+                MotionEvent.obtain(downTime, getNewEventTime(), MotionEvent.ACTION_MOVE, x[6], y[6], 0),
+                MotionEvent.obtain(downTime, getNewEventTime(), MotionEvent.ACTION_UP, x[7], y[7], 0)
+        )
+        motionEventList.forEach {
+            viewPager.dispatchTouchEvent(it)
+        }
+    }
+
+    private fun getNewEventTime() : Long{
+        eventTime += 15
+        return eventTime
     }
 
     internal fun dpToPx(dps: Int): Int {

@@ -44,4 +44,9 @@ public class PageAdapter extends FragmentStatePagerAdapter {
     public Fragment getCurrentPrimaryItem() {
         return mCurrentPrimaryItem;
     }
+
+    @Override
+    public float getPageWidth(int position) {
+        return super.getPageWidth(position);
+    }
 }

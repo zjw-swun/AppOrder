@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -44,6 +45,12 @@ public class MyViewPager extends ViewPager {
     }
 
     @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        Log.e("TAG",ev.toString());
+       return super.dispatchTouchEvent(ev);
+    }
+
+    /*@Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         //要不要走该方法由disallowIntercept决定 (down事件透传之后 子view才能设置disallowIntercept，默认可以拦截)
         View myLayout = null;
@@ -104,7 +111,7 @@ public class MyViewPager extends ViewPager {
         }
         boolean onInterceptTouchEvent = super.onInterceptTouchEvent(ev);
         return shouldIntercept == null ? onInterceptTouchEvent : shouldIntercept | onInterceptTouchEvent;
-    }
+    }*/
 
     int dpToPx(int dps) {
         return Math.round(getResources().getDisplayMetrics().density * dps);
