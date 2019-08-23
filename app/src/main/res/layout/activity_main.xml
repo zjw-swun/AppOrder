@@ -1,28 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:id="@+id/myRoot"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical">
-
-    <com.zjw.tablayout.TabLayout
-        android:id="@+id/tabLayout"
-        style="@style/CustomerTabLayout"
-        android:layout_width="match_parent"
-        android:layout_height="42dp"
-        app:tabGravity="center"
-        app:tabMode="scrollable"/>
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/myRoot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+
         <com.zjw.apporder.MyViewPager
             android:id="@+id/viewPager"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            />
+            android:layout_height="match_parent" />
+
+
+        <com.zjw.tablayout.TabLayout
+            android:id="@+id/tabLayout"
+            style="@style/CustomerTabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            app:tabGravity="center"
+            app:tabMode="scrollable" />
 
         <com.zjw.tablayout.TabLayout
             android:id="@+id/page_indicator"
@@ -34,16 +35,18 @@
             app:tabGravity="center"
             app:tabIndicatorHeight="0dp"
             app:tabPaddingEnd="10dp"
-            app:tabPaddingStart="10dp"/>
+            app:tabPaddingStart="10dp" />
+
 
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/tx"
             android:layout_width="200dp"
             android:layout_height="200dp"
-            android:background="@color/colorPrimary"
             android:layout_gravity="center"
             android:autoSizeTextType="uniform"
-            android:text="点我"
-            />
+            android:background="@color/colorPrimary"
+            android:text="点我" />
     </FrameLayout>
+
+
 </LinearLayout>

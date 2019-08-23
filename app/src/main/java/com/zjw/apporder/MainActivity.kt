@@ -1,5 +1,6 @@
 package com.zjw.apporder
 
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.os.SystemClock
 import android.support.v7.app.AppCompatActivity
@@ -68,7 +69,7 @@ class MainActivity : AppCompatActivity() {
             tab?.setCustomView(R.layout.item_tab)
         }
         tx.setOnClickListener {
-            createMotionEvent();
+            createMotionEvent()
         }
     }
 
