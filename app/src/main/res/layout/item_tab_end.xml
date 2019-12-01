@@ -34,6 +34,8 @@
             android:maxLines="2"
             android:textColor="#4494F0"
             android:textSize="14sp"
+            android:visibility="invisible"
+            tools:visibility="visible"
             tools:text="tab title" />
     </com.zjw.apporder.ClipFramLayout>
 </FrameLayout>

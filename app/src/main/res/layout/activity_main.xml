@@ -29,7 +29,7 @@
             app:tabPaddingEnd="0dp"
             />
 
-        <com.zjw.tablayout.TabLayout
+      <!--  <com.zjw.tablayout.TabLayout
             android:id="@+id/page_indicator"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -39,7 +39,7 @@
             app:tabGravity="center"
             app:tabIndicatorHeight="0dp"
             app:tabPaddingEnd="10dp"
-            app:tabPaddingStart="10dp" />
+            app:tabPaddingStart="10dp" />-->
 
 
         <android.support.v7.widget.AppCompatTextView

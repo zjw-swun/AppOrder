@@ -24,12 +24,12 @@ class MainActivity : AppCompatActivity() {
         var fragments = ArrayList<MyFragemnt>()
         var strList = arrayListOf(
                 "A卡A",
-                "A卡 卡A",
-                "A卡 卡 卡A"
+                "A卡卡A",
+                "A卡卡卡A"
                 ,
-                "A卡 卡 卡 卡A",
-                "A卡 卡 卡A",
-                "A卡 卡A",
+                "A卡卡卡卡A",
+                "A卡卡卡A",
+                "A卡卡A",
                 "A卡A"
         )
 
@@ -62,8 +62,8 @@ class MainActivity : AppCompatActivity() {
         tabLayout.setupWithViewPager(viewPager)
 
         //指示器不需要显示PageAdapter 中的标题所以禁掉
-        page_indicator.setPageTitleVisible(false)
-        page_indicator.setupWithViewPager(viewPager)
+       /* page_indicator.setPageTitleVisible(false)
+        page_indicator.setupWithViewPager(viewPager)*/
 
         for (index in 0 until tabLayout.tabCount) {
             //依次获取标签

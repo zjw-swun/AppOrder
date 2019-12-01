@@ -1173,6 +1173,29 @@ public class TabLayout extends HorizontalScrollView {
                 dispatchTabSelected(tab);
             }
         }
+        //还原文字选中效果
+        // 1.左边  位置 position
+        for (int i = 0; i < mTabs.size(); i++) {
+            final View customView = mTabs.get(i).mCustomView;
+            if (!(customView instanceof FrameLayout )){
+                return;
+            }
+            final FrameLayout frameLayout = (FrameLayout) customView;
+            final View childAt = frameLayout.getChildAt(1);
+            if (mTabs.get(i)== tab){
+                if (childAt instanceof ClipFramLayout) {
+                    ((ClipFramLayout) childAt).setDirection(ClipFramLayout.Direction.LEFT_TO_RIGHT);
+                    ((ClipFramLayout) childAt).setVisibility(View.VISIBLE);
+                    ((ClipFramLayout) childAt).setCurrentProgress(1);
+                }
+            }else {
+                if (childAt instanceof ClipFramLayout) {
+                    ((ClipFramLayout) childAt).setDirection(ClipFramLayout.Direction.LEFT_TO_RIGHT);
+                    ((ClipFramLayout) childAt).setVisibility(View.INVISIBLE);
+                    ((ClipFramLayout) childAt).setCurrentProgress(0);
+                }
+            }
+        }
     }
 
     private void dispatchTabSelected(@NonNull final Tab tab) {
@@ -1996,10 +2019,10 @@ public class TabLayout extends HorizontalScrollView {
                 return;
             }
 
-            final int targetLeft = targetView.getLeft();
-            final int targetRight = targetView.getRight();
-            final int startLeft;
-            final int startRight;
+            int targetLeft = targetView.getLeft();
+            int targetRight = targetView.getRight();
+            int startLeft;
+            int startRight;
 
             if (Math.abs(position - mSelectedPosition) <= 1) {
                 // If the views are adjacent, we'll animate from edge-to-edge
@@ -2025,18 +2048,27 @@ public class TabLayout extends HorizontalScrollView {
                 }
             }
 
+            if (mIsIndicatorWidthWrapContent){
+                targetLeft = getChildAt(position).getLeft();
+                targetRight = getChildAt(position).getLeft() + getWrapContentIndicatorWidth(position);
+            }
+
             if (startLeft != targetLeft || startRight != targetRight) {
                 ValueAnimator animator = mIndicatorAnimator = new ValueAnimator();
                 animator.setInterpolator(AnimationUtils.FAST_OUT_SLOW_IN_INTERPOLATOR);
                 animator.setDuration(duration);
                 animator.setFloatValues(0, 1);
+                final int finalStartLeft = startLeft;
+                final int finalTargetLeft = targetLeft;
+                final int finalStartRight = startRight;
+                final int finalTargetRight = targetRight;
                 animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                     @Override
                     public void onAnimationUpdate(ValueAnimator animator) {
                         final float fraction = animator.getAnimatedFraction();
                         setIndicatorPosition(
-                                AnimationUtils.lerp(startLeft, targetLeft, fraction),
-                                AnimationUtils.lerp(startRight, targetRight, fraction));
+                                AnimationUtils.lerp(finalStartLeft, finalTargetLeft, fraction),
+                                AnimationUtils.lerp(finalStartRight, finalTargetRight, fraction));
                     }
                 });
                 animator.addListener(new AnimatorListenerAdapter() {
@@ -2067,15 +2099,27 @@ public class TabLayout extends HorizontalScrollView {
                 if (mSelectedIndicatorWidth > 0 && getSelectedTabPosition() >= 0 &&
                         (mIsIndicatorWidthWrapContent || (mSelectedIndicatorWidth <= minTabWidth))
                         ) {
-                    if (mViewPager == null || !mIsDragged) {
+
+                    if (mIsDragged) {
+                        mIndicatorLeft = (int) left;
+                        mIndicatorRight = (int) right;
+                    } else {
+                        left = mIndicatorLeft;
+                        right = mIndicatorRight;
+                    }
+                   /* if (mViewPager == null || !mIsDragged) {
                         left = mIndicatorLeft + (getChildAt(getSelectedTabPosition()).getMeasuredWidth() - mSelectedIndicatorWidth) / 2.0f;
                         right = left + mSelectedIndicatorWidth;
 
-                        if (getSelectedTabPosition() ==  mTabs.size()-1){
+                        if (getSelectedTabPosition() == mTabs.size() - 1) {
                             left = mIndicatorLeft;
                             right = left + mSelectedIndicatorWidth;
                         }
-                    }
+                    }*/
+                   /* if (getSelectedTabPosition() ==  mTabs.size()-1){
+                        left = mIndicatorLeft;
+                        right = left + mSelectedIndicatorWidth;
+                    }*/
                     canvas.drawRect(left,
                             getHeight() - mSelectedIndicatorHeight,
                             right,
@@ -2096,16 +2140,16 @@ public class TabLayout extends HorizontalScrollView {
                 final View childAt = getChildAt(index);
                 if (childAt instanceof TabView) {
                     final TabView tabView = (TabView) childAt;
-                    if (tabView.mIconView != null && tabView.isShown()) {
+                    if (tabView.mIconView != null && tabView.mIconView.isShown()) {
                         mWidthList.add(tabView.mIconView.getMeasuredWidth());
                     }
-                    if (tabView.mTextView != null && tabView.isShown()) {
+                    if (tabView.mTextView != null && tabView.mTextView.isShown()) {
                         mWidthList.add(tabView.mTextView.getMeasuredWidth());
                     }
-                    if (tabView.mCustomIconView != null && tabView.isShown()) {
+                    if (tabView.mCustomIconView != null && tabView.mCustomIconView.isShown()) {
                         mWidthList.add(tabView.mCustomIconView.getMeasuredWidth());
                     }
-                    if (tabView.mCustomTextView != null && tabView.isShown()) {
+                    if (tabView.mCustomTextView != null && tabView.mCustomTextView.isShown()) {
                         mWidthList.add(tabView.mCustomTextView.getMeasuredWidth());
                     }
                     if (!mWidthList.isEmpty()) {
@@ -2238,59 +2282,77 @@ public class TabLayout extends HorizontalScrollView {
                 // onPageSelected() instead.
                 final boolean updateIndicator = !(mScrollState == SCROLL_STATE_SETTLING
                         && mPreviousScrollState == SCROLL_STATE_IDLE);
+                if (mScrollState == SCROLL_STATE_SETTLING && mPreviousScrollState == SCROLL_STATE_IDLE) {
+                    tabLayout.mTabStrip.mIsDragged = false;
+                } else {
+                    tabLayout.mTabStrip.mIsDragged = true;
+                }
                 tabLayout.setScrollPosition(position, positionOffset, updateText, updateIndicator);
 
-                if (tabLayout.mNeedSwitchAnimation) {
-                    if (mScrollState == SCROLL_STATE_SETTLING && mPreviousScrollState == SCROLL_STATE_IDLE) {
-                        tabLayout.mTabStrip.mIsDragged = false;
-                    } else {
-                        tabLayout.mTabStrip.mIsDragged = true;
-                        if (tabLayout.mTabStrip.mSelectedPosition + 1 < tabLayout.mTabStrip.getChildCount()) {
-                            float offset = (tabLayout.mTabStrip.getChildAt(tabLayout.mTabStrip.mSelectedPosition).getMeasuredWidth()
-                                    - tabLayout.mTabStrip.getWrapContentIndicatorWidth(tabLayout.mTabStrip.mSelectedPosition)
-                            ) / 2.0f;
-                            float leftX = tabLayout.mTabStrip.getChildAt(tabLayout.mTabStrip.mSelectedPosition).getLeft() + offset;
-                            float rightX = leftX + tabLayout.mTabStrip.getWrapContentIndicatorWidth(tabLayout.mTabStrip.mSelectedPosition);
+                if (tabLayout.mNeedSwitchAnimation && tabLayout.mTabStrip.mIsDragged) {
+                    if (tabLayout.mTabStrip.mSelectedPosition + 1 < tabLayout.mTabStrip.getChildCount()) {
+                        float offset = (tabLayout.mTabStrip.getChildAt(tabLayout.mTabStrip.mSelectedPosition).getMeasuredWidth()
+                                - tabLayout.mTabStrip.getWrapContentIndicatorWidth(tabLayout.mTabStrip.mSelectedPosition)
+                        ) / 2.0f;
 
-                            float nextOffset = (tabLayout.mTabStrip.getChildAt(tabLayout.mTabStrip.mSelectedPosition + 1).getMeasuredWidth()
+                        float leftX = tabLayout.mTabStrip.getChildAt(tabLayout.mTabStrip.mSelectedPosition).getLeft() + offset;
+
+                        float rightX = leftX + tabLayout.mTabStrip.getWrapContentIndicatorWidth(tabLayout.mTabStrip.mSelectedPosition);
+
+
+                          /*  float nextOffset = (tabLayout.mTabStrip.getChildAt(tabLayout.mTabStrip.mSelectedPosition + 1).getMeasuredWidth()
                                     - tabLayout.mTabStrip.getWrapContentIndicatorWidth(tabLayout.mTabStrip.mSelectedPosition + 1)
                             ) / 2.0f;
                             float nextLeftX = tabLayout.mTabStrip.getChildAt(tabLayout.mTabStrip.mSelectedPosition).getLeft()
                                     + tabLayout.mTabStrip.getChildAt(tabLayout.mTabStrip.mSelectedPosition).getWidth() + nextOffset;
                             float nextRightX = nextLeftX +
-                                    tabLayout.mTabStrip.getWrapContentIndicatorWidth(tabLayout.mTabStrip.mSelectedPosition + 1);
-                            //如果下一个是最后一个
-                            if(tabLayout.mTabStrip.mSelectedPosition + 1 == tabLayout.mTabStrip.getChildCount()-1){
-                                nextLeftX = tabLayout.mTabs.get(tabLayout.mTabStrip.getChildCount()-1).mView.getLeft();
-                                nextRightX = nextLeftX + tabLayout.mTabStrip.getWrapContentIndicatorWidth(tabLayout.mTabStrip.getChildCount()-1);
-                            }
-                            tabLayout.mTabStrip.left = leftX + (nextLeftX - leftX) * mStartInterpolator.getInterpolation(positionOffset);
-                            tabLayout.mTabStrip.right = rightX + (nextRightX - rightX) * mEndInterpolator.getInterpolation(positionOffset);
-                            ViewCompat.postInvalidateOnAnimation(tabLayout.mTabStrip);
+                                    tabLayout.mTabStrip.getWrapContentIndicatorWidth(tabLayout.mTabStrip.mSelectedPosition + 1);*/
+                        float nextOffset = (tabLayout.mTabStrip.getChildAt(position).getMeasuredWidth()
+                                - tabLayout.mTabStrip.getWrapContentIndicatorWidth(position)
+                        ) / 2.0f;
+                        int direction = 1;
+                        if (position - tabLayout.mTabStrip.mSelectedPosition >= 0) {
+                            direction = 1;
+                        } else {
+                            direction = -1;
                         }
+                        float nextLeftX = tabLayout.mTabStrip.getChildAt(tabLayout.mTabStrip.mSelectedPosition).getLeft()
+                                + direction * tabLayout.mTabStrip.getChildAt(position).getWidth() + nextOffset;
+                        float nextRightX = nextLeftX +
+                                tabLayout.mTabStrip.getWrapContentIndicatorWidth(tabLayout.mTabStrip.mSelectedPosition + 1);
+                            /*//如果下一个是最后一个
+                            if (position == tabLayout.mTabStrip.getChildCount() - 1) {
+                                nextLeftX = tabLayout.mTabs.get(tabLayout.mTabStrip.getChildCount() - 1).mView.getLeft();
+                                nextRightX = nextLeftX + tabLayout.mTabStrip.getWrapContentIndicatorWidth(tabLayout.mTabStrip.getChildCount() - 1);
+                            }*/
+                        tabLayout.mTabStrip.left = leftX + (nextLeftX - leftX) * mStartInterpolator.getInterpolation(positionOffset);
+                        tabLayout.mTabStrip.right = rightX + (nextRightX - rightX) * mEndInterpolator.getInterpolation(positionOffset);
+                        ViewCompat.postInvalidateOnAnimation(tabLayout.mTabStrip);
+                    }
 
-                        //画文字效果
-                        // 1.左边  位置 position
-                        final View customView = tabLayout.mTabs.get(position).mCustomView;
-                        if (customView instanceof FrameLayout){
-                            final FrameLayout frameLayout = (FrameLayout) customView;
+                    //画文字效果
+                    // 1.左边  位置 position
+                    final View customView = tabLayout.mTabs.get(position).mCustomView;
+                    if (customView instanceof FrameLayout) {
+                        final FrameLayout frameLayout = (FrameLayout) customView;
+                        final View childAt = frameLayout.getChildAt(1);
+                        if (childAt instanceof ClipFramLayout) {
+                            ((ClipFramLayout) childAt).setDirection(ClipFramLayout.Direction.RIGHT_TO_LIFT);
+                            ((ClipFramLayout) childAt).setVisibility(View.VISIBLE);
+                            ((ClipFramLayout) childAt).setCurrentProgress(1 - positionOffset);
+                        }
+                    }
+                    if (position >= tabLayout.mTabs.size() - 1) {
+                        return;
+                    } else {
+                        final View nextCustomView = tabLayout.mTabs.get(position + 1).mCustomView;
+                        if (nextCustomView instanceof FrameLayout) {
+                            final FrameLayout frameLayout = (FrameLayout) nextCustomView;
                             final View childAt = frameLayout.getChildAt(1);
                             if (childAt instanceof ClipFramLayout) {
-                                ((ClipFramLayout) childAt).setDirection(ClipFramLayout.Direction.RIGHT_TO_LIFT);
-                                ((ClipFramLayout) childAt).setCurrentProgress(1 - positionOffset);
-                            }
-                        }
-                        if (position >= tabLayout.mTabs.size() - 1) {
-                            return;
-                        } else {
-                            final View nextCustomView = tabLayout.mTabs.get(position + 1).mCustomView;
-                            if (nextCustomView instanceof FrameLayout) {
-                                final FrameLayout frameLayout = (FrameLayout) nextCustomView;
-                                final View childAt = frameLayout.getChildAt(1);
-                                if (childAt instanceof ClipFramLayout) {
-                                    ((ClipFramLayout) childAt).setDirection(ClipFramLayout.Direction.LEFT_TO_RIGHT);
-                                    ((ClipFramLayout) childAt).setCurrentProgress(positionOffset);
-                                }
+                                ((ClipFramLayout) childAt).setDirection(ClipFramLayout.Direction.LEFT_TO_RIGHT);
+                                ((ClipFramLayout) childAt).setVisibility(View.VISIBLE);
+                                ((ClipFramLayout) childAt).setCurrentProgress(positionOffset);
                             }
                         }
                     }
