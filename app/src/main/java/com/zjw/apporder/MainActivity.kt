@@ -5,8 +5,11 @@ import android.os.Bundle
 import android.os.SystemClock
 import android.support.v7.app.AppCompatActivity
 import android.view.MotionEvent
+import android.widget.FrameLayout
 import com.zjw.tablayout.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.item_tab_end.view.*
+import kotlinx.android.synthetic.main.item_tab.view.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -20,14 +23,14 @@ class MainActivity : AppCompatActivity() {
         var tabNames = ArrayList<String>()
         var fragments = ArrayList<MyFragemnt>()
         var strList = arrayListOf(
-            "A卡A",
-            "A卡 卡A",
-            "A卡 卡 卡A"
-            ,
-            "A卡 卡 卡 卡A",
-            "A卡 卡 卡A",
-            "A卡 卡A",
-            "A卡A"
+                "A卡A",
+                "A卡 卡A",
+                "A卡 卡 卡A"
+                ,
+                "A卡 卡 卡 卡A",
+                "A卡 卡 卡A",
+                "A卡 卡A",
+                "A卡A"
         )
 
         strList.forEach {
@@ -65,8 +68,16 @@ class MainActivity : AppCompatActivity() {
         for (index in 0 until tabLayout.tabCount) {
             //依次获取标签
             val tab = tabLayout.getTabAt(index)
-            //为每个标签设置自定义布局(如果设置了自定义view 原来系统默认的ImageView和TextView 为gone)
-            tab?.setCustomView(R.layout.item_tab)
+            if (index == tabLayout.tabCount - 1) {
+                tab?.setCustomView(R.layout.item_tab_end)
+                val customView = tab?.customView as FrameLayout
+                customView.clipEndTv.text = strList[strList.size - 1]
+            } else {
+                //为每个标签设置自定义布局(如果设置了自定义view 原来系统默认的ImageView和TextView 为gone)
+                tab?.setCustomView(R.layout.item_tab)
+                val customView = tab?.customView as FrameLayout
+                customView.clipTv.text = strList[index]
+            }
         }
         tx.setOnClickListener {
             createMotionEvent()
@@ -96,16 +107,16 @@ class MainActivity : AppCompatActivity() {
         )
 
         //index减大
-       /* val x = arrayListOf<Float>(
-                212.98828f,
-                210.98145f,
-                200.78564f,
-                181.64513f,
-                155.28862f,
-                65.821724f,
-                0.0f,
-                0.0f
-        )*/
+        /* val x = arrayListOf<Float>(
+                 212.98828f,
+                 210.98145f,
+                 200.78564f,
+                 181.64513f,
+                 155.28862f,
+                 65.821724f,
+                 0.0f,
+                 0.0f
+         )*/
         val y = arrayListOf<Float>(
                 110f,
                 110f,
@@ -135,7 +146,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun getNewEventTime() : Long{
+    private fun getNewEventTime(): Long {
         eventTime += 15
         return eventTime
     }

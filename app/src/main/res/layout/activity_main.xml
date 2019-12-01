@@ -23,7 +23,11 @@
             android:layout_width="match_parent"
             android:layout_height="42dp"
             app:tabGravity="center"
-            app:tabMode="scrollable" />
+            app:tabMode="scrollable"
+            app:tabPadding="0dp"
+            app:tabPaddingStart="0dp"
+            app:tabPaddingEnd="0dp"
+            />
 
         <com.zjw.tablayout.TabLayout
             android:id="@+id/page_indicator"

@@ -66,10 +66,14 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.view.animation.LinearInterpolator;
+import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.zjw.apporder.ClipFramLayout;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -2066,6 +2070,11 @@ public class TabLayout extends HorizontalScrollView {
                     if (mViewPager == null || !mIsDragged) {
                         left = mIndicatorLeft + (getChildAt(getSelectedTabPosition()).getMeasuredWidth() - mSelectedIndicatorWidth) / 2.0f;
                         right = left + mSelectedIndicatorWidth;
+
+                        if (getSelectedTabPosition() ==  mTabs.size()-1){
+                            left = mIndicatorLeft;
+                            right = left + mSelectedIndicatorWidth;
+                        }
                     }
                     canvas.drawRect(left,
                             getHeight() - mSelectedIndicatorHeight,
@@ -2200,8 +2209,10 @@ public class TabLayout extends HorizontalScrollView {
         private final WeakReference<TabLayout> mTabLayoutRef;
         private int mPreviousScrollState;
         private int mScrollState;
-        private AccelerateInterpolator mStartInterpolator = new AccelerateInterpolator();
-        private DecelerateInterpolator mEndInterpolator = new DecelerateInterpolator(1.6f);
+        //private AccelerateInterpolator mStartInterpolator = new AccelerateInterpolator();
+        private LinearInterpolator mStartInterpolator = new LinearInterpolator();
+        //private DecelerateInterpolator mEndInterpolator = new DecelerateInterpolator(1.6f);
+        private LinearInterpolator mEndInterpolator = new LinearInterpolator();
 
         public TabLayoutOnPageChangeListener(TabLayout tabLayout) {
             mTabLayoutRef = new WeakReference<>(tabLayout);
@@ -2248,9 +2259,39 @@ public class TabLayout extends HorizontalScrollView {
                                     + tabLayout.mTabStrip.getChildAt(tabLayout.mTabStrip.mSelectedPosition).getWidth() + nextOffset;
                             float nextRightX = nextLeftX +
                                     tabLayout.mTabStrip.getWrapContentIndicatorWidth(tabLayout.mTabStrip.mSelectedPosition + 1);
+                            //如果下一个是最后一个
+                            if(tabLayout.mTabStrip.mSelectedPosition + 1 == tabLayout.mTabStrip.getChildCount()-1){
+                                nextLeftX = tabLayout.mTabs.get(tabLayout.mTabStrip.getChildCount()-1).mView.getLeft();
+                                nextRightX = nextLeftX + tabLayout.mTabStrip.getWrapContentIndicatorWidth(tabLayout.mTabStrip.getChildCount()-1);
+                            }
                             tabLayout.mTabStrip.left = leftX + (nextLeftX - leftX) * mStartInterpolator.getInterpolation(positionOffset);
                             tabLayout.mTabStrip.right = rightX + (nextRightX - rightX) * mEndInterpolator.getInterpolation(positionOffset);
                             ViewCompat.postInvalidateOnAnimation(tabLayout.mTabStrip);
+                        }
+
+                        //画文字效果
+                        // 1.左边  位置 position
+                        final View customView = tabLayout.mTabs.get(position).mCustomView;
+                        if (customView instanceof FrameLayout){
+                            final FrameLayout frameLayout = (FrameLayout) customView;
+                            final View childAt = frameLayout.getChildAt(1);
+                            if (childAt instanceof ClipFramLayout) {
+                                ((ClipFramLayout) childAt).setDirection(ClipFramLayout.Direction.RIGHT_TO_LIFT);
+                                ((ClipFramLayout) childAt).setCurrentProgress(1 - positionOffset);
+                            }
+                        }
+                        if (position >= tabLayout.mTabs.size() - 1) {
+                            return;
+                        } else {
+                            final View nextCustomView = tabLayout.mTabs.get(position + 1).mCustomView;
+                            if (nextCustomView instanceof FrameLayout) {
+                                final FrameLayout frameLayout = (FrameLayout) nextCustomView;
+                                final View childAt = frameLayout.getChildAt(1);
+                                if (childAt instanceof ClipFramLayout) {
+                                    ((ClipFramLayout) childAt).setDirection(ClipFramLayout.Direction.LEFT_TO_RIGHT);
+                                    ((ClipFramLayout) childAt).setCurrentProgress(positionOffset);
+                                }
+                            }
                         }
                     }
                 }
